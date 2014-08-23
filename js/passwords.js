@@ -1,9 +1,10 @@
 $(document).ready(function(){
+
 	function search_for_password(needle) {
 		$.get(
-				"/passwords/php/access_search.php",
+				"/passwords/search",
 				{
-					searchstring: needle,
+					needle: needle,
 				},
 				function (data){
 					$("#accounts").html(data);
@@ -16,29 +17,30 @@ $(document).ready(function(){
 						$(this).addClass("success");
 					});
 				}
-			);
+		);
 	}
 
 	function checkIfPasswordCorrect() {
 		$.ajax({
 			async: false,
-			type: 'GET',
-			url: '/passwords/php/access_search.php',
+			type: 'POST',
+			url: '/passwords/search/',
 			data: 
 				{
-					searchstring: "https://user.rottmann-moebel.de",
+					needle: "DEFAULT",
 					check: "true" 
 				},
 			success: function(data){
 					check = data.split('_');
-					if (decrypt(pass,check[0]) !== "Username" || decrypt(pass,check[1]) !== "E-Mail  " || decrypt(pass,check[2]) !== "Password")
+					if (decrypt(password,check[0]) !== "Username" || decrypt(password,check[1]) !== "email@example.com" || decrypt(password,check[2]) !== "Password")
 					{
-						changeMessageBox("2/Password incorrect!");
+						console.log('Password incorrect');
+						//changeMessageBox("2/Password incorrect!");
 					}
 				}
 		});
 	}
-	
+/*	
 	function checkIfSelectedEntryIsVisible () {
 		if (typeof dbid === 'undefined') {
 			return false;
@@ -64,10 +66,10 @@ $(document).ready(function(){
 		$("#mask_modify_password_password").val($(".entry[dbid=" + dbid + "]").children(".accdaten").next().next().children("span").html());
 		$("#mask_modify_password_notes").val($(".entry[dbid=" + dbid + "]").children(".comment").html());
 	}
-
-	$('#pass').keyup(function(event){ //wenn taste losgelassen wird
+*/
+	$('#password').keyup(function(event){ //wenn taste losgelassen wird
 		if(event.keyCode == '13') { //Pruefung auf enter
-			pass=$('#pass').val();
+			password=$('#password').val();
 			checkIfPasswordCorrect()
 			$("#passOverlay").toggle("fast");
 			$("#searchBox").removeClass("hide");
@@ -80,27 +82,39 @@ $(document).ready(function(){
 	});
 	
 	$("#new_entry").click(function(){
-		$("#mask_new").removeClass("hide");
-		$("#addnew").click(function(){
-			$.post(
-				"/passwords/php/access_add.php",
+		$.post(
+				"/passwords/add",
 				{
-					url: $.trim($('#url').val()),
-					user: encrypt(pass,$.trim($('#user').val())),
-					email: encrypt(pass,$.trim($('#email').val())),
-					pass: encrypt(pass,$.trim($('#passForNewAccount').val())),
-					comment: $('#comment').val()
+					
+				},
+				function (data){
+					$('#mask_new').html(data);
+				}
+		);
+		$("#mask_new").removeClass("hide");
+	});
+
+	$('body #PasswordAddForm').on('submit', function(event)
+	{
+		event.preventDefault();
+		$.post(
+				"/passwords/php/add",
+				{
+					'data[Password][URL]': $.trim($('#PasswordURL').val()),
+					'data[Password][username]': encrypt(password,$.trim($('#PasswordUsername').val())),
+					'data[Password][email]': encrypt(password,$.trim($('#PasswordEmail').val())),
+					'data[Password][password]': encrypt(password,$.trim($('#PasswordPassword').val())),
+					'data[Password][comment]': $('#PasswordComment').val()
 				},
 				function (data){
 					$("#mask_new").hide("slow");
-					changeMessageBox(data);
+				
 				}
 			);
-			blockButton($("#addnew"), 3);
-		});
+			blockButton($("#PasswordSubmit"), 3);
 	});
 	
-	$("#delete_password").click(function(){
+	/*$("#delete_password").click(function(){
 		if (checkIfSelectedEntryIsVisible()){ 
 			$.post(
 				"/passwords/php/delete_password.php",
@@ -154,5 +168,5 @@ $(document).ready(function(){
 			);
 		}
 	});
-
+*/
 });
