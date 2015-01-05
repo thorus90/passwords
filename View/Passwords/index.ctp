@@ -76,11 +76,10 @@
 <div id="accounts"></div>
 <div class="container" id="appContent">
 </div>
-
 <?php
 echo $this->Html->css('passwords/passwords.css');
 echo $this->Html->css('passwords/magnific-popup.css');
 echo $this->Html->script('passwords/magnific-popup.js');
 echo $this->Html->script('passwords/passwords.js');
-echo $this->Html->script('passwords/blowfish.js');
+echo $this->Html->script('passwords/crypt.js');
 ?>

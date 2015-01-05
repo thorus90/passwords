@@ -2,14 +2,9 @@
 
 class Password extends AppModel {
 
+    public $belongsTo = 'PasswordList';
+
     public $validate = array(
-    	'email' => array
-        (
-            'rule' => array('email'),
-            'required' => true,
-            'message' => 'The provided E-Mail is not valid',
-            'allowEmpty' => false
-        ),
         'password' => array
         (
         	'rule' => array('notEmpty'),

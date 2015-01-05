@@ -1,18 +1,23 @@
 $(document).ready(function(){
 
-	function search_for_password(needle) {
-		$.get(
+    passwordlistid = document.URL.split('/');
+    passwordlistid = passwordlistid[passwordlistid.length - 1]
+
+	function search_for_password(needle) 
+	{
+		$.post(
 				"/passwords/search",
 				{
 					needle: needle,
+                    passwordlistid: passwordlistid
 				},
 				function (data){
 					$("#accounts").html(data);
 					$(".toDecrypt").each(function(){
-						$(this).html(decrypt(pass,$(this).html()));
+						$(this).html(decrypt($(this).html()));
 					});
 					$(".entry").click(function(){
-						dbid = $(this).attr("dbid");
+						passwordid = $(this).attr("password_id");
 						$(".entry").removeClass("success");
 						$(this).addClass("success");
 					});
@@ -20,34 +25,37 @@ $(document).ready(function(){
 		);
 	}
 
-	function checkIfPasswordCorrect() {
+	function checkIfPasswordCorrect() 
+	{
 		$.ajax({
 			async: false,
 			type: 'POST',
 			url: '/passwords/search/',
 			data: 
 				{
-					needle: "DEFAULT",
-					check: "true" 
+					needle: "control.example.com",
+                    passwordlistid: passwordlistid
 				},
 			success: function(data){
-					check = data.split('_');
-					if (decrypt(password,check[0]) !== "Username" || decrypt(password,check[1]) !== "email@example.com" || decrypt(password,check[2]) !== "Password")
+                    check = [];
+                    $(data).find('.toDecrypt').each(function(index, element){
+                        check.push($(element).html());
+                    });
+					if (decrypt(check[0]) !== "control" || decrypt(check[1]) !== "control@example.com" || decrypt(check[2]) !== "password")
 					{
-						console.log('Password incorrect');
-						//changeMessageBox("2/Password incorrect!");
+						changeMessageBox("2/Password incorrect!");
 					}
 				}
 		});
 	}
-/*	
+	
 	function checkIfSelectedEntryIsVisible () {
-		if (typeof dbid === 'undefined') {
+		if (typeof passwordid === 'undefined') {
 			return false;
 		}
 		var exists = false
 		$(".entry").each(function() {
-			if ( $(this).attr("dbid") == dbid ){
+			if ( $(this).attr("password_id") == passwordid ){
 				exists = true;
 			}
 		});
@@ -59,17 +67,19 @@ $(document).ready(function(){
 	}
 
 	function fillMaskModifyPassword() {
-		$("#mask_modify_password_dbid").html(dbid);
-		$("#mask_modify_password_url").val($(".entry[dbid=" + dbid + "]").children(".URL").children("a").attr("href"));
-		$("#mask_modify_password_username").val($(".entry[dbid=" + dbid + "]").children(".accdaten").children("span").html());
-		$("#mask_modify_password_email").val($(".entry[dbid=" + dbid + "]").children(".accdaten").next().children("span").html());
-		$("#mask_modify_password_password").val($(".entry[dbid=" + dbid + "]").children(".accdaten").next().next().children("span").html());
-		$("#mask_modify_password_notes").val($(".entry[dbid=" + dbid + "]").children(".comment").html());
+		$("#PasswordEditForm #PasswordPasswordListId").html(passwordid);
+		$("#PasswordEditForm #PasswordURL").val($(".entry[password_id=" + passwordid + "]").children().html());
+		$("#PasswordEditForm #PasswordUsername").val($(".entry[password_id=" + passwordid + "]").children().next().html());
+		$("#PasswordEditForm #PasswordEmail").val($(".entry[password_id=" + passwordid + "]").children().next().next().html());
+		$("#PasswordEditForm #PasswordPassword").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().html());
+		$("#PasswordEditForm #PasswordComment").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().next().html());
 	}
-*/
-	$('#password').keyup(function(event){ //wenn taste losgelassen wird
+
+	$('#password1, #password2, #password3').keyup(function(event){ //wenn taste losgelassen wird
 		if(event.keyCode == '13') { //Pruefung auf enter
-			password=$('#password').val();
+			password1=$('#password1').val();
+			password2=$('#password2').val();
+			password3=$('#password3').val();
 			checkIfPasswordCorrect()
 			$("#passOverlay").toggle("fast");
 			$("#searchBox").removeClass("hide");
@@ -81,45 +91,39 @@ $(document).ready(function(){
 		}
 	});
 	
-	$("#new_entry").click(function(){
-		$.post(
-				"/passwords/add",
-				{
-					
-				},
-				function (data){
-					$('#mask_new').html(data);
-				}
-		);
-		$("#mask_new").removeClass("hide");
-	});
+    $("#new_entry").magnificPopup({
+        type:'inline',
+        midClick: true,
+        modal: false
+    });
 
-	$('body #PasswordAddForm').on('submit', function(event)
+	$('#PasswordAddForm').submit(function(event)
 	{
 		event.preventDefault();
 		$.post(
-				"/passwords/php/add",
+				"/passwords/add/" + passwordlistid,
 				{
-					'data[Password][URL]': $.trim($('#PasswordURL').val()),
-					'data[Password][username]': encrypt(password,$.trim($('#PasswordUsername').val())),
-					'data[Password][email]': encrypt(password,$.trim($('#PasswordEmail').val())),
-					'data[Password][password]': encrypt(password,$.trim($('#PasswordPassword').val())),
-					'data[Password][comment]': $('#PasswordComment').val()
+					'data[Password][URL]': $.trim($('#PasswordAddForm #PasswordURL').val()),
+					'data[Password][username]': encrypt($.trim($('#PasswordAddForm #PasswordUsername').val())),
+					'data[Password][email]': encrypt($.trim($('#PasswordAddForm #PasswordEmail').val())),
+					'data[Password][password]': encrypt($.trim($('#PasswordAddForm #PasswordPassword').val())),
+					'data[Password][comment]': $('#PasswordAddForm #PasswordComment').val(),
+					'data[Password][password_list_id]': $('#PasswordAddForm #PasswordPasswordListId').val()
 				},
 				function (data){
-					$("#mask_new").hide("slow");
-				
+					changeMessageBox(data);
 				}
-			);
-			blockButton($("#PasswordSubmit"), 3);
+		);
+		blockButton($("#PasswordSubmit"), 3);
+        $.magnificPopup.close();
 	});
 	
-	/*$("#delete_password").click(function(){
+	$("#delete_password").click(function(){
 		if (checkIfSelectedEntryIsVisible()){ 
 			$.post(
-				"/passwords/php/delete_password.php",
+				"/passwords/delete/",
 				{
-					dbid: dbid
+					password_id: passwordid
 				},
 				function (data){
 					changeMessageBox(data);
@@ -148,25 +152,34 @@ $(document).ready(function(){
 	  }
 	});
 
-
-	$('.mask_modify_password_submit').keyup(function(event){
+    function edit_password(){
+		$.post(
+			"/passwords/edit/" + passwordid,
+			{
+				'data[Password][URL]': $.trim($('#PasswordEditForm #PasswordURL').val()),
+				'data[Password][username]': encrypt($.trim($('#PasswordEditForm #PasswordUsername').val())),
+				'data[Password][email]': encrypt($.trim($('#PasswordEditForm #PasswordEmail').val())),
+				'data[Password][password]': encrypt($.trim($('#PasswordEditForm #PasswordPassword').val())),
+				'data[Password][comment]': $('#PasswordEditForm #PasswordComment').val(),
+				'data[Password][password_list_id]': $('#PasswordEditForm #PasswordPasswordListId').val()
+			},
+			function (data){
+				changeMessageBox(data);
+				$.magnificPopup.close();
+			}
+		);
+    }
+        
+	$('#PasswordEditForm input').keyup(function(event){
+        event.preventDefault();
 		if(event.keyCode == '13') {
-			$.post(
-				"/passwords/php/edit_password.php",
-				{
-					dbid: dbid,
-					url: $.trim($("#mask_modify_password_url").val()),
-					username: encrypt(pass,$.trim($("#mask_modify_password_username").val())),
-					email: encrypt(pass,$.trim($("#mask_modify_password_email").val())),
-					password: encrypt(pass,$.trim($("#mask_modify_password_password").val())),
-					notes: $("#mask_modify_password_notes").val()
-				},
-				function (data){
-					changeMessageBox(data);
-					$.magnificPopup.close();
-				}
-			);
+            edit_password();
 		}
 	});
-*/
+
+    $('#PasswordEditSubmit').click(function(){
+        event.preventDefault();
+        edit_password();
+    });
+
 });
