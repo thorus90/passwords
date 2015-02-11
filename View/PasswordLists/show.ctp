@@ -6,7 +6,7 @@
 	</div>
 </div>
 
-<div class="container hide" id="searchBox">
+<div class="PasswordListUnhideDiv container hide" id="searchBox">
 	<ul class="nav nav-tabs">
 	  <li><a id="new_entry" href="#mask_new_password">New</a></li>
 	  <li><a id="modify_password" href="#mask_modify_password">Modify</a></li>

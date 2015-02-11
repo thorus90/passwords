@@ -190,5 +190,13 @@ class PasswordListsController extends AppController
             $this->Session->setFlash(__('Error occured'));
         }
     }
+
+    public function import($id = null)
+    {
+        if ( $this->request->is(array('post','put')) )
+        {
+            $this->render(false);
+        }
+    }
 }
 ?>

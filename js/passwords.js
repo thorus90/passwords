@@ -82,7 +82,7 @@ $(document).ready(function(){
 			password3=$('#password3').val();
 			checkIfPasswordCorrect()
 			$("#passOverlay").toggle("fast");
-			$("#searchBox").removeClass("hide");
+			$(".PasswordListUnhideDiv").removeClass("hide");
 		}
 	});
 	$("#search").keyup(function(){
