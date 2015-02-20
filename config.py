@@ -7,6 +7,7 @@ symlinks = [
 	(sdir + '/Model/PasswordList.php', cakedir + '/Model/PasswordList.php'),
 	(sdir + '/View/PasswordLists/add.ctp', cakedir + '/View/PasswordLists/add.ctp'),
 	(sdir + '/View/PasswordLists/edit.ctp', cakedir + '/View/PasswordLists/edit.ctp'),
+	(sdir + '/View/PasswordLists/import.ctp', cakedir + '/View/PasswordLists/import.ctp'),
 	(sdir + '/View/PasswordLists/index.ctp', cakedir + '/View/PasswordLists/index.ctp'),
 	(sdir + '/View/PasswordLists/show.ctp', cakedir + '/View/PasswordLists/show.ctp'),
 	(sdir + '/View/Passwords/add.ctp', cakedir + '/View/Passwords/add.ctp'),
