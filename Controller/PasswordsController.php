@@ -9,7 +9,6 @@ class PasswordsController extends AppController
         )
     );
 	public $components = array(
-		'DebugKit.Toolbar',
         'Session',
         'Auth'
     );

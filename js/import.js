@@ -9,9 +9,9 @@ $(document).ready(function()
                 "/passwords/add/" + passwordlistid,
                 {
                     'data[Password][URL]': $.trim(password[0]),
-                    'data[Password][username]': encrypt($.trim(password[1])),
-                    'data[Password][email]': encrypt($.trim(password[2])),
-                    'data[Password][password]': encrypt($.trim(password[3])),
+                    'data[Password][username]': encrypt($.trim(password[1]).replace('-;-','"')),
+                    'data[Password][email]': encrypt($.trim(password[2]).replace('-;-','"')),
+                    'data[Password][password]': encrypt($.trim(password[3]).replace('-;-','"')),
                     'data[Password][comment]': password[4],
                     'data[Password][password_list_id]': passwordlistid
                 },
