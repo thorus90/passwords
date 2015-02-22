@@ -1,4 +1,5 @@
 <?php
+echo '<div id="messages"></div>';
 if ($noListexists)
 {
 	echo $this->Html->link(__('So far no List exists, click here to create one!'),array('controller' => 'PasswordLists', 'action' => 'add'));

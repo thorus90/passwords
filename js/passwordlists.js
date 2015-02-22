@@ -29,7 +29,17 @@ $(document).ready(function(){
 				},
 				function(data)
 				{
-					console.log(data)
+					if (data.split("/")[0] == '0')
+                    {
+                        var form = $('<form id="flashAction" action="/PasswordLists/index/" method="post">' +
+                            '<input type="text" name="flash" value="' + data + '" /></form>');
+                        $('body').append(form);
+                        $('#flashAction').submit(); 
+                    }
+                    else
+                    {
+                        changeMessageBox(data);
+                    }
 				}
 			);
 		}

@@ -1,4 +1,5 @@
 <?php
+    echo '<div id="messages"></div>';
 	echo $this->Form->create('PasswordList');
 	echo $this->Form->input('PasswordList.name');
 	echo $this->Form->input('Passwords.password1', array ('label' => __('Password1 (mandatory)')));

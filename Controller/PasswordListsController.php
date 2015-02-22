@@ -14,7 +14,7 @@ class PasswordListsController extends AppController
     );
 
     public $uses = array('Password', 'PasswordList');
-	
+
     public function index()
     {
     	$noListexists = false;
@@ -41,11 +41,23 @@ class PasswordListsController extends AppController
     	}
     	$this->set('noListexists', $noListexists);
     	$this->set('PasswordLists', $PasswordLists);
+        if ( isset($this->request->data['flash']) )
+        {
+            $this->set('javascript', 'changeMessageBox("' . $this->request->data['flash'] . '");');
+        }
     }
 	
 	public function add()
 	{
 		$this->set('standAlone', false);
+		if ( $this->request->is('ajax') ) 
+		{
+			$this->layout = 'ajax';
+		}
+		else
+		{
+			$this->set('standAlone', true);
+		}
 		if ( $this->request->is('post') )
 		{
 			$PasswordList['PasswordList']['name'] = $this->request->data['PasswordList']['name'];
@@ -66,7 +78,8 @@ class PasswordListsController extends AppController
 				$password['Password']['password_list_id'] = $this->PasswordList->id;
 				if($this->Password->save($password))
 				{
-                	$this->Session->setFlash(__('The Passwordlist has been saved!'));					
+                    $this->layout = 'flashOnly';
+                	$this->Session->setFlash(__('0/The Passwordlist has been saved!'), 'flash_minimal');
 				}
 				else
 				{
@@ -78,14 +91,6 @@ class PasswordListsController extends AppController
             {
             	$this->Session->setFlash(__('Could not save Passwordlist!'));
             }
-		}
-		if ( $this->request->is('ajax') ) 
-		{
-			$this->layout = 'ajax';
-		}
-		else
-		{
-			$this->set('standAlone', true);
 		}
 	}
 
@@ -182,7 +187,7 @@ class PasswordListsController extends AppController
     {
         if($this->PasswordList->delete($id))
         {
-            $this->Session->setFlash(__('The password list has been deleted'));
+            $this->flash(__('The password list has been deleted'), array ( 'controller' => 'PasswordLists' , 'action' => 'index'), 3);
         }
         else
         {
