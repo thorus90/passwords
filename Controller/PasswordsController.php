@@ -44,7 +44,7 @@ class PasswordsController extends AppController
 					'OR' => array
 					(
 						'Password.URL LIKE' => '%' . $needle . '%',
-						'Password.comment LIKE' => '%' . $needle . '%'
+						'Password.comment LIKE' => '%' . $needle . '%',
                         'Password.type LIKE' => '%' . $needle . '%'
 					),
 					'AND' => array
