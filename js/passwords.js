@@ -108,6 +108,7 @@ $(document).ready(function(){
 					'data[Password][email]': encrypt($.trim($('#PasswordAddForm #PasswordEmail').val())),
 					'data[Password][password]': encrypt($.trim($('#PasswordAddForm #PasswordPassword').val())),
 					'data[Password][comment]': $('#PasswordAddForm #PasswordComment').val(),
+                    'data[Password][type]': $('#PasswordAddForm [name="data[Password][type]"]').val(),
 					'data[Password][password_list_id]': $('#PasswordAddForm #PasswordPasswordListId').val()
 				},
 				function (data){
@@ -182,4 +183,23 @@ $(document).ready(function(){
         edit_password();
     });
 
+    $('body').on('click', '#PasswordAddType', function()
+    {
+        event.preventDefault();
+        if ( typeof pressed == 'undefined' || pressed == false )
+        {
+            $(this).html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>');
+            $('#PasswordType').attr("name","");
+            $(this).parent().after('<div class="col-lg-9 col-lg-offset-2"><input name="data[Password][type]" class="form-control" type="text" id="PasswordTypeNew" required="required"></div>');
+            $(this).html('<span class="glyphicon glyphicon-minus"></span>');
+            pressed = true;
+        }
+        else
+        {
+            $(this).html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>');
+            $('#PasswordTypeNew').parent().remove();
+            $(this).html('<span class="glyphicon glyphicon-plus"></span>');
+            pressed = false;
+        }
+    });
 });

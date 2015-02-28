@@ -1,8 +1,10 @@
 doNext:
-- Missing View when deleting a list
 - Editing only the name of a list does not work
 - when giving wrong password crypt.js gives back malformed data because when decrypting with first wrong password malformed data is given to second decryption
-- after adding a passwordlist nothing happens
+- generate drop down out of type list
+- when loggedout automatically no redirect happens when searching for passwords
+- The Password has beend saved0
+- when delete a password remove layout
 
 Features:
 

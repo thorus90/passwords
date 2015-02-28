@@ -179,8 +179,15 @@ class PasswordListsController extends AppController
 	    	),
     		'recursive' => -1
     	));
+        $DistinctPasswordTypes = $this->Password->find('all', array(
+            'fields' => array('DISTINCT Password.type'),
+            'conditions' => array( 'Password.password_list_id' => $id , array('not' => array ( 'Password.type' => null ) ) ),
+            'recursive' => 0
+        ));
+        $DistinctPasswordTypes = Hash::extract($DistinctPasswordTypes, '{n}.Password.type') ;
     	$this->set('PasswordList', $PasswordList);
         $this->set('password_list_id', $id);
+        $this->set('DistinctPasswordTypes' , $DistinctPasswordTypes);
 	}
 
     public function delete($id = null)

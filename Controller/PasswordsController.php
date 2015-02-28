@@ -45,6 +45,7 @@ class PasswordsController extends AppController
 					(
 						'Password.URL LIKE' => '%' . $needle . '%',
 						'Password.comment LIKE' => '%' . $needle . '%'
+                        'Password.type LIKE' => '%' . $needle . '%'
 					),
 					'AND' => array
 					(
@@ -80,6 +81,7 @@ class PasswordsController extends AppController
 		}
 		if ( $this->request->is('post') ) 
 		{
+            debug($this->request->data);
 			if ($this->Password->save($this->request->data)) {
                 $this->set('message', __('0/The Password has been saved'));
             }

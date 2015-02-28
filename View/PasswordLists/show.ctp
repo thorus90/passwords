@@ -34,6 +34,12 @@
     echo $this->Form->input('Password.email');
     echo $this->Form->input('Password.password');
     echo $this->Form->input('Password.comment');
+    echo $this->Form->input('Password.type',array(
+        'options' => $DistinctPasswordTypes,
+        'empty' => '(choose one)',
+        'between' => '<div class="col-lg-9">',
+        'after' => '</div><div class="col-lg-1"><button id="PasswordAddType" type="button" class="btn btn-default" aria-label="Left Align"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>',
+    ));
     echo $this->Form->input('Password.password_list_id', array
         (
             'type' => 'hidden',

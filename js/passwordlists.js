@@ -155,4 +155,5 @@ $(document).ready(function(){
             changeMessageBox('0/Passwordlist changed! <a href="/">Go to start</a>') 
         }
     });
+    
 });
