@@ -77,13 +77,12 @@ class PasswordsController extends AppController
 		$this->set('standAlone', false);
 		if ( $this->request->is('ajax') )
 		{
-			$this->layout = 'ajax';
+			$this->layout = 'flashOnly';
 		}
 		if ( $this->request->is('post') ) 
 		{
-            debug($this->request->data);
 			if ($this->Password->save($this->request->data)) {
-                $this->set('message', __('0/The Password has been saved'));
+                $this->Session->setFlash(__('0/The Password has been saved'), 'flash_minimal');
             }
 		}
 		else

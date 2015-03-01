@@ -184,10 +184,14 @@ class PasswordListsController extends AppController
             'conditions' => array( 'Password.password_list_id' => $id , array('not' => array ( 'Password.type' => null ) ) ),
             'recursive' => 0
         ));
-        $DistinctPasswordTypes = Hash::extract($DistinctPasswordTypes, '{n}.Password.type') ;
+        $DistinctPasswordTypesNum = Hash::extract($DistinctPasswordTypes, '{n}.Password.type') ;
+        #convert Nummeric array to associative
+        foreach ( $DistinctPasswordTypesNum as $type ){
+            $DistinctPasswordTypesAssoc[$type] = $type;
+        }
     	$this->set('PasswordList', $PasswordList);
         $this->set('password_list_id', $id);
-        $this->set('DistinctPasswordTypes' , $DistinctPasswordTypes);
+        $this->set('DistinctPasswordTypes' , $DistinctPasswordTypesAssoc);
 	}
 
     public function delete($id = null)
