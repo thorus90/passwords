@@ -3,7 +3,6 @@ doNext:
 - when giving wrong password crypt.js gives back malformed data because when decrypting with first wrong password malformed data is given to second decryption
 - generate drop down out of type list
 - The Password has beend saved0
-- when delete a password remove layout
 
 Features:
 

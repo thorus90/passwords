@@ -17,15 +17,15 @@ class PasswordsController extends AppController
 
     public function delete($id = null)
     {
-        $this->render(false);
+        $this->layout  = 'flashOnly';
         $id = $this->request->data['password_id'];
         if($this->Password->delete($id))
         {
-            echo __('0/The password has been deleted');
+            $this->Session->setFlash(__('0/The password has been deleted'), 'flash_minimal');
         }
         else
         {
-            echo __('2/Error occured');
+            $this->Session->setFlash(__('2/Error occured'), 'flash_minimal');
         }
     }
 

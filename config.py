@@ -11,6 +11,7 @@ symlinks = [
 	(sdir + '/View/PasswordLists/index.ctp', cakedir + '/View/PasswordLists/index.ctp'),
 	(sdir + '/View/PasswordLists/show.ctp', cakedir + '/View/PasswordLists/show.ctp'),
 	(sdir + '/View/Passwords/add.ctp', cakedir + '/View/Passwords/add.ctp'),
+	(sdir + '/View/Passwords/delete.ctp', cakedir + '/View/Passwords/delete.ctp'),
 	(sdir + '/View/Passwords/index.ctp', cakedir + '/View/Passwords/index.ctp'),
 	(sdir + '/View/Passwords/search.ctp', cakedir + '/View/Passwords/search.ctp'),
 	(sdir + '/css/magnific-popup.css', cakedir + '/webroot/css/passwords/magnific-popup.css'),
