@@ -22,7 +22,13 @@ $(document).ready(function(){
 						$(this).addClass("success");
 					});
 				}
-		);
+		).fail(function(failobject)
+        {
+            if ( failobject.status == 403 )
+            {
+                window.location.replace("/");
+            }
+        });
 	}
 
 	function checkIfPasswordCorrect() 
