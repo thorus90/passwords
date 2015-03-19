@@ -75,6 +75,12 @@
             'type' => 'hidden',
             'value' => $password_list_id
         ));
+    echo $this->Form->input('Password.type',array(
+        'options' => $DistinctPasswordTypes,
+        'empty' => '(choose one)',
+        'between' => '<div class="col-lg-9">',
+        'after' => '</div><div class="col-lg-1"><button id="PasswordAddType" type="button" class="btn btn-default" aria-label="Left Align"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>',
+    ));
     echo '<div class="row">';
         echo $this->Form->end(array(
             'label' => __('Edit Password'),

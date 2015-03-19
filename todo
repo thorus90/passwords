@@ -1,9 +1,9 @@
 doNext:
 - Editing only the name of a list does not work
-- when giving wrong password crypt.js gives back malformed data because when decrypting with first wrong password malformed data is given to second decryption
-- The Password has beend saved0
 
 Features:
 
+- clear formular when added successfully
+- make URL actually a link and prepend a http:// if not there
 - passwordlist disabled_by to check if disabled by an admin
 - possibility to disable user completely from passwordsmodule

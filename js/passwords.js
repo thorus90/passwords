@@ -79,6 +79,7 @@ $(document).ready(function(){
 		$("#PasswordEditForm #PasswordEmail").val($(".entry[password_id=" + passwordid + "]").children().next().next().html());
 		$("#PasswordEditForm #PasswordPassword").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().html());
 		$("#PasswordEditForm #PasswordComment").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().next().html());
+		$("#PasswordEditForm #PasswordType").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().next().next().html());
 	}
 
 	$('#password1, #password2, #password3').keyup(function(event){ //wenn taste losgelassen wird
@@ -168,7 +169,8 @@ $(document).ready(function(){
 				'data[Password][email]': encrypt($.trim($('#PasswordEditForm #PasswordEmail').val())),
 				'data[Password][password]': encrypt($.trim($('#PasswordEditForm #PasswordPassword').val())),
 				'data[Password][comment]': $('#PasswordEditForm #PasswordComment').val(),
-				'data[Password][password_list_id]': $('#PasswordEditForm #PasswordPasswordListId').val()
+				'data[Password][password_list_id]': $('#PasswordEditForm #PasswordPasswordListId').val(),
+				'data[Password][type]': $('#PasswordEditForm [name="data[Password][type]"]').val()
 			},
 			function (data){
 				changeMessageBox(data);
