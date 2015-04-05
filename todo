@@ -1,5 +1,9 @@
 doNext:
 - Editing only the name of a list does not work
+- route darf nicht in der letzte zeile stehen (sed?)
+- passwort vergessen legt neuen benutzer an anstatt passwort zurückzusetzen
+- rückfrage bevor liste löschen
+- passwort *** machen und dann drücken um klartext anzuzeigen
 
 Features:
 
