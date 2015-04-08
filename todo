@@ -4,6 +4,7 @@ doNext:
 - passwort vergessen legt neuen benutzer an anstatt passwort zurückzusetzen
 - rückfrage bevor liste löschen
 - passwort *** machen und dann drücken um klartext anzuzeigen
+- passwortliste 2 user gleicher name
 
 Features:
 

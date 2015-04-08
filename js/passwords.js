@@ -14,7 +14,9 @@ $(document).ready(function(){
 				function (data){
 					$("#accounts").html(data);
 					$(".toDecrypt").each(function(){
-						$(this).html(decrypt($(this).html()));
+						decrypted = decrypt($(this).html());
+                        escaped = $("span").text(decrypted).html();
+                        $(this).html(escaped);
 					});
 					$(".entry").click(function(){
 						passwordid = $(this).attr("password_id");
