@@ -1,46 +1,51 @@
 <?php
 
+namespace App\Controller;
+
+use App\Controller\AppController;
+use Cake\Utility\Hash;
+use Cake\ORM\TableRegistry;
+
 class PasswordListsController extends AppController
 {
 
-	public $helpers = array(
-        'Form' => array(
-              'className' => 'BootstrapForm'
-        )
-    );
-	public $components = array(
-        'Session',
-        'Auth'
-    );
+    public function initialize()
+    {
+        $this->loadComponent('Auth');
+        $this->loadComponent('Flash');
+        $this->loadModel('Passwords');
+    }
 
-    public $uses = array('Password', 'PasswordList');
+    public $helpers = [
+        'Html' => [
+            'className' => 'Bootstrap3.BootstrapHtml'
+        ],
+        'Form' => [
+            'className' => 'Bootstrap3.BootstrapForm'
+        ],
+        'Paginator' => [
+            'className' => 'Bootstrap3.BootstrapPaginator'
+        ],
+        'Modal' => [
+            'className' => 'Bootstrap3.BootstrapModal'
+        ]
+    ];
 
     public function index()
     {
     	$noListexists = false;
-    	$PasswordLists = $this->PasswordList->find('all', array(
-    		'conditions' => array(
-    			'PasswordListsUser.user_id' => $this->Auth->user('id'),
-    			'PasswordList.enabled' => true
-    		),
-    		'joins' => array(
-    			array(
-    				'table' => 'password_lists_users',
-    				'alias' => 'PasswordListsUser',
-	    			'type' => 'LEFT',
-	    			'conditions' => array(
-	    				'PasswordListsUser.password_list_id = PasswordList.id',
-	    			)
-	    		)
-	    	),
-    		'recursive' => -1
-    	));
-    	if( count($PasswordLists) == 0 )
+        $passwordList = $this->PasswordLists->find()
+            ->where( [ 'PasswordListsUser.user_id' => $this->Auth->user('id') , 'PasswordLists.enabled' => true ] )
+            ->leftJoin( 
+                [ 'PasswordListsUser' => 'password_lists_users' ],
+                [ 'PasswordListsUser.password_list_id = PasswordLists.id' ]
+            );
+        if ( $passwordList->count() == 0 )
     	{
     		$noListexists = true;
     	}
     	$this->set('noListexists', $noListexists);
-    	$this->set('PasswordLists', $PasswordLists);
+    	$this->set('PasswordLists', $passwordList->toArray());
         if ( isset($this->request->data['flash']) )
         {
             $this->set('javascript', 'changeMessageBox("' . $this->request->data['flash'] . '");');
@@ -50,6 +55,8 @@ class PasswordListsController extends AppController
 	public function add()
 	{
 		$this->set('standAlone', false);
+        $passwordListsTable = TableRegistry::get('PasswordLists');
+        $passwordList = $passwordListsTable->newEntity();
 		if ( $this->request->is('ajax') ) 
 		{
 			$this->layout = 'ajax';
@@ -57,39 +64,41 @@ class PasswordListsController extends AppController
 		else
 		{
 			$this->set('standAlone', true);
+            $this->set('passwordList', $passwordList);
 		}
 		if ( $this->request->is('post') )
 		{
-			$PasswordList['PasswordList']['name'] = $this->request->data['PasswordList']['name'];
-			$PasswordList['PasswordList']['enabled'] = true;
-			$PasswordList['User']['id'] = $this->Auth->user('id');
-			if ($this->PasswordList->saveAll($PasswordList)) {
-		        if ( $this->request->is('ajax') ) 
-		        {
-                    $this->set('message', $this->PasswordList->getInsertID());
-                }
+            $data = [
+                'name' => $this->request->data['name'],
+                'enabled' => true,
+                'users' => [
+                    [ 'id' => $this->request->session()->read('Auth.User.id') ]
+                ] ];
+            $passwordList = $passwordListsTable->newEntity($data, [ 'associated' => [ 'Users' ] ] );
+			if ($this->PasswordLists->save($passwordList)) {
 				$this->loadModel('Password');
-				$password['Password']['URL'] = $this->request->data['Password']['URL'];
-				$password['Password']['username'] = $this->request->data['Password']['username'];
-				$password['Password']['email'] = $this->request->data['Password']['email'];
-				$password['Password']['password'] = $this->request->data['Password']['password'];
-				$password['Password']['email'] = $this->request->data['Password']['email'];
-				$password['Password']['type'] = $this->request->data['Password']['type'];
-				$password['Password']['password_list_id'] = $this->PasswordList->id;
-				if($this->Password->save($password))
+                $passwordsTable = TableRegistry::get('Passwords');
+                $password = $passwordsTable->newEntity();
+                $password->URL = $this->request->data['URL'];
+                $password->username = $this->request->data['username'];
+                $password->email = $this->request->data['email'];
+                $password->password = $this->request->data['password'];
+                $password->type = $this->request->data['type'];
+                $password->password_list_id = $passwordList->id;
+				if($passwordsTable->save($password))
 				{
                     $this->layout = 'flashOnly';
-                	$this->Session->setFlash(__('0/The Passwordlist has been saved!'), 'flash_minimal');
+                	$this->Flash->flash_minimal(__('0/The Passwordlist has been saved!'));
 				}
 				else
 				{
-					$this->PasswordList->deleteAll(array('PasswordList.name' =>$this->request->data['PasswordList']['name']));
-					$this->Session->setFlash(__('Control Password could not be saved!'));
+					$passwordListsTable->delete($passwordList);
+					$this->Flash->flash_minimal(__('Control Password could not be saved!'));
 				}
             }
             else
             {
-            	$this->Session->setFlash(__('Could not save Passwordlist!'));
+            	$this->Flash->flash_minimal(__('Could not save Passwordlist!'));
             }
 		}
 	}
@@ -99,27 +108,15 @@ class PasswordListsController extends AppController
 		$this->set('standAlone', true);
         if( $id == null )
         {
-            $id = $this->request->data['PasswordList']['id'];
+            $id = $this->request->data['id'];
         }
-        $PasswordList = $this->PasswordList->find('first', array(
-            'conditions' => array(
-                'PasswordListsUser.user_id' => $this->Auth->user('id'),
-                'PasswordList.enabled' => true,
-                'PasswordList.id' => $id
-            ),
-            'joins' => array(
-                array(
-                    'table' => 'password_lists_users',
-                    'alias' => 'PasswordListsUser',
-                    'type' => 'LEFT',
-                    'conditions' => array(
-                        'PasswordListsUser.password_list_id = PasswordList.id',
-                    )
-                )
-            ),
-            'recursive' => -1
-        ));
-        $this->set('old_name',$PasswordList['PasswordList']['name']);
+        $PasswordLists = $this->PasswordLists->find()
+            ->where( [ 'PasswordListsUser.user_id' => $this->request->session()->read('Auth.User.id') , 'PasswordLists.enabled' => true , 'PasswordLists.id' => $id ] )
+            ->leftJoin(
+                [ 'PasswordListsUser' => 'password_lists_users' ],
+                [ 'PasswordListsUser.password_list_id = PasswordLists.id' ] );
+        $PasswordList = $PasswordLists->first();
+        $this->set('old_name',$PasswordList->name);
         if (!$PasswordList)
         {
             $this->set('message',__('Your not authorized for this PasswordList!'));
@@ -130,29 +127,12 @@ class PasswordListsController extends AppController
             {
                if ($this->request->data['prepare'])
                {
-               		echo json_encode($this->Password->find('all', array
-            			(
-            				'conditions' => array
-            				(
-            						'Password.password_list_id' => $id
-            				),
-            				'joins' => array(
-            	    			array(
-            	    				'table' => 'password_lists_users',
-            	    				'alias' => 'PasswordListsUser',
-            		    			'type' => 'LEFT',
-            		    			'conditions' => array(
-            		    				'AND'  => array
-            		    				(
-            		    					'PasswordListsUser.password_list_id' => $id,
-            		    					'PasswordListsUser.user_id' => $this->Auth->user('id')
-            		    				)
-            		    			)
-            		    		)
-            	    		),
-            				'recursive' => -1
-            			)
-            		));
+				    $this->loadModel('Password');
+               		echo json_encode($this->Passwords->find()
+                        ->where( [ 'Passwords.password_list_id' => $id ] )
+                        ->leftJoin(
+                            [ 'PasswordListsUser' => 'password_lists_users' ],
+                            [ 'PasswordListsUser.password_list_id' => $id , 'PasswordListsUser.user_id' => $this->request->session()->read('Auth.User.id') ] ));
                     $this->autoRender = false;
                } 
             } 
@@ -161,34 +141,28 @@ class PasswordListsController extends AppController
 
 	public function show($id = null)
 	{
-		$PasswordList = $this->PasswordList->find('first', array(
-    		'conditions' => array(
-    			'PasswordListsUser.user_id' => $this->Auth->user('id'),
-    			'PasswordList.enabled' => true,
-    			'PasswordList.id' => $id
-    		),
-    		'joins' => array(
-    			array(
-    				'table' => 'password_lists_users',
-    				'alias' => 'PasswordListsUser',
-	    			'type' => 'LEFT',
-	    			'conditions' => array(
-	    				'PasswordListsUser.password_list_id = PasswordList.id',
-	    			)
-	    		)
-	    	),
-    		'recursive' => -1
-    	));
-        $DistinctPasswordTypes = $this->Password->find('all', array(
-            'fields' => array('DISTINCT Password.type'),
-            'conditions' => array( 'Password.password_list_id' => $id , array('not' => array ( 'Password.type' => null ) ) ),
-            'recursive' => 0
-        ));
-        $DistinctPasswordTypesNum = Hash::extract($DistinctPasswordTypes, '{n}.Password.type') ;
-        #convert Nummeric array to associative
-        foreach ( $DistinctPasswordTypesNum as $type ){
-            $DistinctPasswordTypesAssoc[$type] = $type;
+        $PasswordLists = $this->PasswordLists->find()
+            ->where( [ 'PasswordListsUser.user_id' => $this->Auth->user('id') , 'PasswordLists.enabled' => true , 'PasswordLists.id' => $id ] )
+            ->leftJoin(
+                [ 'PasswordListsUser' => 'password_lists_users' ],
+                [ 'PasswordListsUser.password_list_id = PasswordLists.id' ] );
+        $PasswordList = $PasswordLists->first();
+        $DistinctPasswordTypes = $this->Passwords->find()
+            ->select(['type'])
+            ->distinct(['type'])
+            ->where(['password_list_id' => $id])
+            ->andwhere([ 'type IS NOT' => null ]);
+        $DistinctPasswordTypes = $DistinctPasswordTypes->toArray();
+        $DistinctPasswordTypesAssoc = [];
+        foreach( $DistinctPasswordTypes as $DistinctPasswordType )
+        {
+            if ( $DistinctPasswordType->type != '' )
+            {
+                $DistinctPasswordTypesAssoc[$DistinctPasswordType->type] = $DistinctPasswordType->type;
+            }
         }
+       
+        $this->set('password' , $this->Passwords->newEntity()); 
     	$this->set('PasswordList', $PasswordList);
         $this->set('password_list_id', $id);
         $this->set('DistinctPasswordTypes' , $DistinctPasswordTypesAssoc);
@@ -196,13 +170,16 @@ class PasswordListsController extends AppController
 
     public function delete($id = null)
     {
-        if($this->PasswordList->delete($id))
+        $passwordListsTable = TableRegistry::get('PasswordLists');
+        $passwordList = $passwordListsTable->get($id);
+        if($passwordListsTable->delete($passwordList))
         {
-            $this->flash(__('The password list has been deleted'), array ( 'controller' => 'PasswordLists' , 'action' => 'index'), 3);
+            $this->Flash->flash_minimal(__('The password list has been deleted'));
+            $this->redirect( [ 'controller' => 'PasswordLists' , 'action' => 'index' ] );
         }
         else
         {
-            $this->Session->setFlash(__('Error occured'));
+            $this->Flash->flash_minimal(__('Error occured'));
         }
     }
 

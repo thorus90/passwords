@@ -7,9 +7,9 @@ $(document).ready(function(){
     $('body #PasswordListAddForm').on('submit', function(event)
 	{
 		event.preventDefault();
-		password1 = $('#PasswordsPassword1').val();
-		password2 = $('#PasswordsPassword2').val();
-		password3 = $('#PasswordsPassword3').val();
+		password1 = $('#passwords-password1').val();
+		password2 = $('#passwords-password2').val();
+		password3 = $('#passwords-password3').val();
 		if ( password1.length > 3 )
 		{
 			controlUsername = encrypt('control');
@@ -19,13 +19,13 @@ $(document).ready(function(){
 			$.post(
 				'/PasswordLists/add/',
 				{
-					'data[PasswordList][name]': $('#PasswordListName').val(),
-					'data[Password][URL]': controlURL,
-					'data[Password][username]': controlUsername,
-					'data[Password][email]': controlEmail,
-					'data[Password][password]': controlPassword,
-					'data[Password][comment]': controlComment,
-					'data[Password][type]': controlType
+					'name': $('#passwordlist-name').val(),
+					'URL': controlURL,
+					'username': controlUsername,
+					'email': controlEmail,
+					'password': controlPassword,
+					'comment': controlComment,
+					'type': controlType
 				},
 				function(data)
 				{
@@ -49,19 +49,20 @@ $(document).ready(function(){
 		}
 	});
 
-    $('#PasswordListEditForm').on('click','#PasswordListEditSubmit', function(event)
+    $('body #PasswordListEditForm').on('submit', function(event)
     {
         event.preventDefault();
         passwordlist_id = $('#PasswordListEditForm').attr('action').split('/');
         passwordlist_id = passwordlist_id[passwordlist_id.length - 1];
-        if( $('#PasswordsOldpassword1').val() == undefined && $('#PasswordsNewpassword1').val() == undefined )
+        if( $('#oldpassword1').val() == undefined && $('#newpassword1').val() == undefined )
+
         {
             $.post(
                 '/PasswordLists/edit/',
                 {
-                    'data[PasswordList][id]': passwordlist_id,
-                    'data[PasswordList][name]': $('#PasswordListName').val(),
-                    'data[prepare]': false
+                    'id': passwordlist_id,
+                    'name': $('#PasswordListName').val(),
+                    'prepare': false
                 },
                 function(data)
                 {
@@ -69,7 +70,7 @@ $(document).ready(function(){
                 }
             );
         }
-        else if( $('#PasswordsOldpassword1').val() == undefined || $('#PasswordsNewpassword1').val() == undefined )
+        else if( $('#oldpassword1').val() == undefined || $('#newpassword1').val() == undefined )
         {
             changeMessageBox('1/You have to give at least Old Password 1 and New Password 1 if you want to change the Password!')
         }
@@ -85,8 +86,8 @@ $(document).ready(function(){
                 type: 'POST',
                 url: '/PasswordLists/edit/',
                 data: {
-                    'data[PasswordList][id]': passwordlist_id,
-                    'data[prepare]': true
+                    'id': passwordlist_id,
+                    'prepare': true
                 },
                 async: false,
                 success: function(data)
@@ -95,19 +96,20 @@ $(document).ready(function(){
                 }
             });
       
-		    password1 = $('#PasswordsOldpassword1').val();
-		    password2 = $('#PasswordsOldpassword2').val();
-		    password3 = $('#PasswordsOldpassword3').val();
+		    password1 = $('#oldpassword1').val();
+		    password2 = $('#oldpassword2').val();
+		    password3 = $('#oldpassword3').val();
             for (var n = passwords.length - 1; n >= 0; n--)
             {
-                passwords[n]['Password']['username'] = decrypt(passwords[n]['Password']['username'])
-                passwords[n]['Password']['email'] = decrypt(passwords[n]['Password']['email'])
-                passwords[n]['Password']['password'] = decrypt(passwords[n]['Password']['password'])
+                passwords[n]['username'] = decrypt(passwords[n]['username'])
+                passwords[n]['email'] = decrypt(passwords[n]['email'])
+                passwords[n]['password'] = decrypt(passwords[n]['password'])
             }
 
-		    password1 = $('#PasswordsNewpassword1').val();
-		    password2 = $('#PasswordsNewpassword2').val();
-		    password3 = $('#PasswordsNewpassword3').val();
+            console.log(passwords);
+		    password1 = $('#newpassword1').val();
+		    password2 = $('#newpassword2').val();
+		    password3 = $('#newpassword3').val();
 		    controlUsername = encrypt('control');
 		    controlEmail = encrypt('control@example.com');
 		    controlPassword = encrypt('password');
@@ -116,13 +118,13 @@ $(document).ready(function(){
                 type: 'POST',
                 url: '/PasswordLists/add/',
                 data: {
-		    		'data[PasswordList][name]': tmp_name,
-		    		'data[Password][URL]': controlURL,
-		    		'data[Password][username]': controlUsername,
-		    		'data[Password][email]': controlEmail,
-		    		'data[Password][password]': controlPassword,
-		    		'data[Password][comment]': controlComment,
-		    		'data[Password][type]': controlType
+		    		'name': tmp_name,
+		    		'URL': controlURL,
+		    		'username': controlUsername,
+		    		'email': controlEmail,
+		    		'password': controlPassword,
+		    		'comment': controlComment,
+		    		'type': controlType
                 },
                 async: false,
                 success: function(data)
@@ -133,19 +135,19 @@ $(document).ready(function(){
     
             passwords.forEach(function(entry)
             {
-                if( entry['Password']['URL'] != 'control.example.com' )
+                if( entry['URL'] != 'control.example.com' )
                 {
                     $.ajax({
                         type: 'POST',
                         url: "/passwords/add/" + passwordlist_id,
                         data: {
-                            'data[Password][URL]': entry['Password']['URL'],
-                            'data[Password][username]': encrypt(entry['Password']['username']),
-                            'data[Password][email]': encrypt(entry['Password']['email']),
-                            'data[Password][password]': encrypt(entry['Password']['password']),
-                            'data[Password][comment]': entry['Password']['comment'],
-                            'data[Password][type]': entry['Password']['type'],
-                            'data[Password][password_list_id]': passwordlist_id
+                            'URL': entry['URL'],
+                            'username': encrypt(entry['username']),
+                            'email': encrypt(entry['email']),
+                            'password': encrypt(entry['password']),
+                            'comment': entry['comment'],
+                            'type': entry['type'],
+                            'password_list_id': passwordlist_id
                         },
                         async: false
                     });
@@ -154,6 +156,6 @@ $(document).ready(function(){
                    
             changeMessageBox('0/Passwordlist changed! <a href="/">Go to start</a>') 
         }
-    });
+    } );
     
 });

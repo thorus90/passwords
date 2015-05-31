@@ -1,31 +1,45 @@
 <?php
 
+namespace App\Controller;
+
+use App\Controller\AppController;
+use Cake\ORM\TableRegistry;
+
 class PasswordsController extends AppController
 {
+    public function initialize()
+    {
+        $this->loadComponent('Auth');
+        $this->loadComponent('Flash');
+    }
 
-	public $helpers = array(
-        'Form' => array(
-              'className' => 'BootstrapForm'
-        )
-    );
-	public $components = array(
-        'Session',
-        'Auth'
-    );
-
-    public $uses = array('Password', 'PasswordList');
+    public $helpers = [
+        'Html' => [
+            'className' => 'Bootstrap3.BootstrapHtml'
+        ],
+        'Form' => [
+            'className' => 'Bootstrap3.BootstrapForm'
+        ],
+        'Paginator' => [
+            'className' => 'Bootstrap3.BootstrapPaginator'
+        ],
+        'Modal' => [
+            'className' => 'Bootstrap3.BootstrapModal'
+        ]
+    ];
 
     public function delete($id = null)
     {
         $this->layout  = 'flashOnly';
         $id = $this->request->data['password_id'];
-        if($this->Password->delete($id))
+        $passwordsTable = TableRegistry::get('Passwords');
+        if($passwordsTable->delete($passwordsTable->get($id)))
         {
-            $this->Session->setFlash(__('0/The password has been deleted'), 'flash_minimal');
+            $this->Flash->flash_minimal(__('0/The password has been deleted'));
         }
         else
         {
-            $this->Session->setFlash(__('2/Error occured'), 'flash_minimal');
+            $this->Flash->flash_minimal(__('2/Error occured'));
         }
     }
 
@@ -37,38 +51,19 @@ class PasswordsController extends AppController
 			$needle = $this->request->data['needle'];
 			$passwordlistid = $this->request->data['passwordlistid'];
 		}
-		$this->set('passwords',$this->Password->find('all', array
-			(
-				'conditions' => array
-				(
-					'OR' => array
-					(
-						'Password.URL LIKE' => '%' . $needle . '%',
-						'Password.comment LIKE' => '%' . $needle . '%',
-                        'Password.type LIKE' => '%' . $needle . '%'
-					),
-					'AND' => array
-					(
-						'Password.password_list_id' => $passwordlistid
-					)
-				),
-				'joins' => array(
-	    			array(
-	    				'table' => 'password_lists_users',
-	    				'alias' => 'PasswordListsUser',
-		    			'type' => 'LEFT',
-		    			'conditions' => array(
-		    				'AND'  => array
-		    				(
-		    					'PasswordListsUser.password_list_id' => $passwordlistid,
-		    					'PasswordListsUser.user_id' => $this->Auth->user('id')
-		    				)
-		    			)
-		    		)
-	    		),
-				'recursive' => -1
-			)
-		));
+        $passwords = $this->Passwords->find()
+            ->where( [
+                'Passwords.password_list_id' => $passwordlistid,
+                'OR' => [
+                    'Passwords.URL LIKE' => '%' . $needle . '%',
+                    'Passwords.comment LIKE' => '%' . $needle . '%',
+                    'Passwords.type LIKE' => '%' . $needle . '%'
+                ] ] )
+            ->leftJoin(
+                [ 'PasswordListsUser' => 'password_lists_users' ],
+                [ 'PasswordListsUser.password_list_id' => $passwordlistid, 'PasswordListsUser.user_id' => $this->Auth->user('id') ] );
+        $passwords = $passwords->toArray();
+        $this->set('passwords' , $passwords);
     }
 	
 	public function add($id = null)
@@ -81,8 +76,15 @@ class PasswordsController extends AppController
 		}
 		if ( $this->request->is('post') ) 
 		{
-			if ($this->Password->save($this->request->data)) {
-                $this->Session->setFlash(__('0/The Password has been saved'), 'flash_minimal');
+            $passwordsTable = TableRegistry::get('Passwords');
+            $password = $passwordsTable->newEntity();
+            $passwordsTable->patchEntity($password,$this->request->data);
+			if ($passwordsTable->save($password)) {
+                $this->Flash->flash_minimal(__('0/The Password has been saved'));
+            }
+            else
+            {
+                $this->Flash->flash_minimal(__('2/The Password has not been saved'));
             }
 		}
 		else
@@ -93,27 +95,25 @@ class PasswordsController extends AppController
 
     public function edit($id = null)
     {
-        $this->render(false);
-        $password = $this->Password->find('first',array('conditions' => array('Password.id' => $id)));
+        $this->layout = 'flashOnly';
+        $password = $this->Passwords->find()->where( [ 'Passwords.id' => $id ] );
         if (!$password) 
         {
-            echo __('2/Password not found');
+            $this->Flash->flash_minimal(__('2/Password not found'));
             exit();
-        }
-        if ( $this->request->is('ajax') )
-        {
-            $this->layout = 'ajax';
         }
         if ( $this->request->is(array('post','put')) )
         {
-            $this->Password->id = $id;
-            if($this->Password->save($this->request->data))
+            $passwordsTable = TableRegistry::get('Passwords');
+            $password = $passwordsTable->get($id);
+            $passwordsTable->patchEntity($password,$this->request->data);
+            if($passwordsTable->save($password))
             {
-                echo __('0/The password has been saved');
+                $this->Flash->flash_minimal(__('0/The password has been saved'));
             }
             else
             {
-                echo __('2/Error occured');
+                $this->Flash->flash_minimal(__('2/Error occured'));
             }
         }
     }

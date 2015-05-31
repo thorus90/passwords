@@ -6,7 +6,7 @@ import sys
 
 sdir = os.path.dirname( os.path.realpath(__file__) )
 wdir = os.path.relpath( os.path.join(sdir, '..', '..') )
-cakedir = wdir + '/app'
+cakedir = wdir + '/src'
 
 execfile("config.py")
 print("Notice: taking this as docroot: " + cakedir)

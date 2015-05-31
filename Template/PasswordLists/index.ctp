@@ -7,20 +7,20 @@ if ($noListexists)
 else
 {
 	echo '<div class="container">';
-		foreach ($PasswordLists as $key => $value) {
+		foreach ($PasswordLists as $PasswordList) {
             echo '<div class="row">';
                 echo '<div class="col-md-4">';
-                    echo '<a class="btn btn-primary btn-lg btn-block" href="/PasswordLists/edit/' .  $value['PasswordList']['id'] . '">';
+                    echo '<a class="btn btn-primary btn-lg btn-block" href="/PasswordLists/edit/' .  $PasswordList->id . '">';
                         echo '<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>';
                     echo '</a>'; 
                 echo '</div>';
                 echo '<div class="col-md-4">';
-			        echo '<a class="btn btn-primary btn-lg btn-block" href="/PasswordLists/show/' . $value['PasswordList']['id'] . '">';
-                        echo $value['PasswordList']['name'];
+			        echo '<a class="btn btn-primary btn-lg btn-block" href="/PasswordLists/show/' . $PasswordList->id . '">';
+                        echo $PasswordList->name;
                     echo '</a>';
                 echo '</div>';
                 echo '<div class="col-md-4">';
-                    echo '<a class="btn btn-primary btn-lg btn-block" href="/PasswordLists/delete/' .  $value['PasswordList']['id'] . '">';
+                    echo '<a class="btn btn-primary btn-lg btn-block" href="/PasswordLists/delete/' .  $PasswordList->id . '">';
                         echo '<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>';
                     echo '</a>'; 
                 echo '</div>';

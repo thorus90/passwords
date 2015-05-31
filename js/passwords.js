@@ -74,13 +74,12 @@ $(document).ready(function(){
 	}
 
 	function fillMaskModifyPassword() {
-		$("#PasswordEditForm #PasswordPasswordListId").html(passwordid);
-		$("#PasswordEditForm #PasswordURL").val($(".entry[password_id=" + passwordid + "]").children().html());
-		$("#PasswordEditForm #PasswordUsername").val($(".entry[password_id=" + passwordid + "]").children().next().html());
-		$("#PasswordEditForm #PasswordEmail").val($(".entry[password_id=" + passwordid + "]").children().next().next().html());
-		$("#PasswordEditForm #PasswordPassword").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().html());
-		$("#PasswordEditForm #PasswordComment").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().next().html());
-		$("#PasswordEditForm #PasswordType").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().next().next().html());
+		$("#PasswordEditForm #url").val($(".entry[password_id=" + passwordid + "]").children().html());
+		$("#PasswordEditForm #username").val($(".entry[password_id=" + passwordid + "]").children().next().html());
+		$("#PasswordEditForm #email").val($(".entry[password_id=" + passwordid + "]").children().next().next().html());
+		$("#PasswordEditForm #password").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().html());
+		$("#PasswordEditForm #comment").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().next().html());
+		$("#PasswordEditForm #type").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().next().next().html());
 	}
 
 	$('#password1, #password2, #password3').keyup(function(event){ //wenn taste losgelassen wird
@@ -111,13 +110,13 @@ $(document).ready(function(){
 		$.post(
 				"/passwords/add/" + passwordlistid,
 				{
-					'data[Password][URL]': $.trim($('#PasswordAddForm #PasswordURL').val()),
-					'data[Password][username]': encrypt($.trim($('#PasswordAddForm #PasswordUsername').val())),
-					'data[Password][email]': encrypt($.trim($('#PasswordAddForm #PasswordEmail').val())),
-					'data[Password][password]': encrypt($.trim($('#PasswordAddForm #PasswordPassword').val())),
-					'data[Password][comment]': $('#PasswordAddForm #PasswordComment').val(),
-                    'data[Password][type]': $('#PasswordAddForm [name="data[Password][type]"]').val(),
-					'data[Password][password_list_id]': $('#PasswordAddForm #PasswordPasswordListId').val()
+					'URL': $.trim($('#PasswordAddForm #url').val()),
+					'username': encrypt($.trim($('#PasswordAddForm #username').val())),
+					'email': encrypt($.trim($('#PasswordAddForm #email').val())),
+					'password': encrypt($.trim($('#PasswordAddForm #password').val())),
+					'comment': $('#PasswordAddForm #comment').val(),
+                    'type': $('#PasswordAddForm [name="type"]').val(),
+					'password_list_id': $('#PasswordAddForm #password-list-id').val()
 				},
 				function (data){
 					changeMessageBox(data);
@@ -165,17 +164,18 @@ $(document).ready(function(){
 		$.post(
 			"/passwords/edit/" + passwordid,
 			{
-				'data[Password][URL]': $.trim($('#PasswordEditForm #PasswordURL').val()),
-				'data[Password][username]': encrypt($.trim($('#PasswordEditForm #PasswordUsername').val())),
-				'data[Password][email]': encrypt($.trim($('#PasswordEditForm #PasswordEmail').val())),
-				'data[Password][password]': encrypt($.trim($('#PasswordEditForm #PasswordPassword').val())),
-				'data[Password][comment]': $('#PasswordEditForm #PasswordComment').val(),
-				'data[Password][password_list_id]': $('#PasswordEditForm #PasswordPasswordListId').val(),
-				'data[Password][type]': $('#PasswordEditForm [name="data[Password][type]"]').val()
+				'URL': $.trim($('#PasswordEditForm #url').val()),
+				'username': encrypt($.trim($('#PasswordEditForm #username').val())),
+				'email': encrypt($.trim($('#PasswordEditForm #email').val())),
+				'password': encrypt($.trim($('#PasswordEditForm #password').val())),
+				'comment': $('#PasswordEditForm #comment').val(),
+				'password_list_id': $('#PasswordEditForm #password-list-id').val(),
+				'type': $('#PasswordEditForm [name="type"]').val()
 			},
 			function (data){
 				changeMessageBox(data);
 				$.magnificPopup.close();
+                search_for_password($("#search").val());
 			}
 		);
     }
@@ -187,7 +187,7 @@ $(document).ready(function(){
 		}
 	});
 
-    $('#PasswordEditSubmit').click(function(){
+    $('#PasswordEditForm').submit(function(){
         event.preventDefault();
         edit_password();
     });
@@ -198,8 +198,8 @@ $(document).ready(function(){
         if ( typeof pressed == 'undefined' || pressed == false )
         {
             $(this).html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>');
-            $('#PasswordType').attr("name","");
-            $(this).parent().after('<div class="col-lg-9 col-lg-offset-2"><input name="data[Password][type]" class="form-control" type="text" id="PasswordTypeNew" required="required"></div>');
+            $('#type').attr("name","");
+            $(this).parent().parent().after('<div class="col-lg-9 col-lg-offset-2"><input name="type" class="form-control" type="text" id="PasswordTypeNew" required="required"></div>');
             $(this).html('<span class="glyphicon glyphicon-minus"></span>');
             pressed = true;
         }
@@ -207,6 +207,7 @@ $(document).ready(function(){
         {
             $(this).html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>');
             $('#PasswordTypeNew').parent().remove();
+            $('#type').attr("name","type");
             $(this).html('<span class="glyphicon glyphicon-plus"></span>');
             pressed = false;
         }
