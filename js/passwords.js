@@ -90,6 +90,7 @@ $(document).ready(function(){
 			checkIfPasswordCorrect()
 			$("#passOverlay").toggle("fast");
 			$(".PasswordListUnhideDiv").removeClass("hide");
+            $("#search").focus();   
 		}
 	});
 	$("#search").keyup(function(){
