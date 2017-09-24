@@ -18,16 +18,16 @@ class PasswordListsController extends AppController
 
     public $helpers = [
         'Html' => [
-            'className' => 'Bootstrap3.BootstrapHtml'
+            'className' => 'Bootstrap.BootstrapHtml'
         ],
         'Form' => [
-            'className' => 'Bootstrap3.BootstrapForm'
+            'className' => 'Bootstrap.BootstrapForm'
         ],
         'Paginator' => [
-            'className' => 'Bootstrap3.BootstrapPaginator'
+            'className' => 'Bootstrap.BootstrapPaginator'
         ],
         'Modal' => [
-            'className' => 'Bootstrap3.BootstrapModal'
+            'className' => 'Bootstrap.BootstrapModal'
         ]
     ];
 
@@ -59,7 +59,7 @@ class PasswordListsController extends AppController
         $passwordList = $passwordListsTable->newEntity();
 		if ( $this->request->is('ajax') ) 
 		{
-			$this->layout = 'ajax';
+			$this->viewBuilder()->layout('ajax');
 		}
 		else
 		{
@@ -87,7 +87,7 @@ class PasswordListsController extends AppController
                 $password->password_list_id = $passwordList->id;
 				if($passwordsTable->save($password))
 				{
-                    $this->layout = 'flashOnly';
+                    $this->viewBuilder()->layout('flashOnly');
                 	$this->Flash->flash_minimal(__('0/The Passwordlist has been saved!'));
 				}
 				else

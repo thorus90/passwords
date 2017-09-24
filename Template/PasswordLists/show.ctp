@@ -24,7 +24,7 @@
 
 <div class="container mfp-hide" id="mask_new_password">
     <?php
-    echo $this->Form->create($password, ['action' => 'add', 'id' => 'PasswordAddForm' ] );
+    echo $this->Form->create($password, [ 'url' => [ 'controller' => 'passwords', 'action' => 'add' ], 'id' => 'PasswordAddForm' ] );
     echo $this->Form->input('URL');
     echo $this->Form->input('username');
     echo $this->Form->input('email');
@@ -53,7 +53,7 @@
 
 <div class="container mfp-hide" id="mask_modify_password">
     <?php
-    echo $this->Form->create($password, [ 'action' => 'edit' , 'id' => 'PasswordEditForm' ] );
+    echo $this->Form->create($password, [ 'url' => [ 'controller' => 'passwords', 'action' => 'edit' ], 'id' => 'PasswordEditForm' ] );
     echo $this->Form->input('URL');
     echo $this->Form->input('username');
     echo $this->Form->input('email');

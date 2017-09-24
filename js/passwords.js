@@ -107,7 +107,7 @@ $(document).ready(function(){
 
 	$('#PasswordAddForm').submit(function(event)
 	{
-		event.preventDefault();
+		event.preventDefault(event);
 		$.post(
 				"/passwords/add/" + passwordlistid,
 				{
@@ -182,20 +182,20 @@ $(document).ready(function(){
     }
         
 	$('#PasswordEditForm input').keyup(function(event){
-        event.preventDefault();
+        event.preventDefault(event);
 		if(event.keyCode == '13') {
             edit_password();
 		}
 	});
 
-    $('#PasswordEditForm').submit(function(){
-        event.preventDefault();
+    $('#PasswordEditForm').submit(function(event){
+        event.preventDefault(event);
         edit_password();
     });
 
-    $('body').on('click', '#PasswordAddType', function()
+    $('body').on('click', '#PasswordAddType', function(event)
     {
-        event.preventDefault();
+        event.preventDefault(event);
         if ( typeof pressed == 'undefined' || pressed == false )
         {
             $(this).html('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>');

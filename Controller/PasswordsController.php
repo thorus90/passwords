@@ -15,22 +15,22 @@ class PasswordsController extends AppController
 
     public $helpers = [
         'Html' => [
-            'className' => 'Bootstrap3.BootstrapHtml'
+            'className' => 'Bootstrap.BootstrapHtml'
         ],
         'Form' => [
-            'className' => 'Bootstrap3.BootstrapForm'
+            'className' => 'Bootstrap.BootstrapForm'
         ],
         'Paginator' => [
-            'className' => 'Bootstrap3.BootstrapPaginator'
+            'className' => 'Bootstrap.BootstrapPaginator'
         ],
         'Modal' => [
-            'className' => 'Bootstrap3.BootstrapModal'
+            'className' => 'Bootstrap.BootstrapModal'
         ]
     ];
 
     public function delete($id = null)
     {
-        $this->layout  = 'flashOnly';
+        $this->viewBuilder()->layout('flashOnly');
         $id = $this->request->data['password_id'];
         $passwordsTable = TableRegistry::get('Passwords');
         if($passwordsTable->delete($passwordsTable->get($id)))
@@ -47,7 +47,7 @@ class PasswordsController extends AppController
     {
         if ( $this->request->is('ajax') )
 		{
-			$this->layout = 'ajax';
+			$this->viewBuilder()->layout('ajax');
 			$needle = $this->request->data['needle'];
 			$passwordlistid = $this->request->data['passwordlistid'];
 		}
@@ -72,7 +72,7 @@ class PasswordsController extends AppController
 		$this->set('standAlone', false);
 		if ( $this->request->is('ajax') )
 		{
-			$this->layout = 'flashOnly';
+			$this->viewBuilder()->layout('flashOnly');
 		}
 		if ( $this->request->is('post') ) 
 		{
@@ -95,7 +95,7 @@ class PasswordsController extends AppController
 
     public function edit($id = null)
     {
-        $this->layout = 'flashOnly';
+        $this->viewBuilder()->layout('flashOnly');
         $password = $this->Passwords->find()->where( [ 'Passwords.id' => $id ] );
         if (!$password) 
         {
