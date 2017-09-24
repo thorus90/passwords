@@ -6,7 +6,7 @@ $(document).ready(function(){
 	
     $('body #PasswordListAddForm').on('submit', function(event)
 	{
-		event.preventDefault();
+		event.preventDefault(event);
 		password1 = $('#passwords-password1').val();
 		password2 = $('#passwords-password2').val();
 		password3 = $('#passwords-password3').val();
@@ -51,7 +51,7 @@ $(document).ready(function(){
 
     $('body #PasswordListEditForm').on('submit', function(event)
     {
-        event.preventDefault();
+        event.preventDefault(event);
         passwordlist_id = $('#PasswordListEditForm').attr('action').split('/');
         passwordlist_id = passwordlist_id[passwordlist_id.length - 1];
         if( $('#oldpassword1').val() == undefined && $('#newpassword1').val() == undefined )

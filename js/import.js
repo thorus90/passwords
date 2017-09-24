@@ -2,7 +2,7 @@ $(document).ready(function()
 {
     $('body #ImportImportForm').on('submit', function()
     {
-        event.preventDefault();
+        event.preventDefault(event);
         var passwords = $.csv.toArrays($('#ImportImport').val());
         passwords.forEach(function(password) {
             $.post(
