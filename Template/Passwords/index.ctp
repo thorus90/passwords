@@ -41,7 +41,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-6 col-xs-4">
-				<label class="control-label">Username:</label>
+				<label class="control-label">User&name:</label>
 			</div>
 			<div class="col-md-6 col-xs-8">
 				<input class="mask_modify_password_submit form-control" type="text" id="mask_modify_password_username">

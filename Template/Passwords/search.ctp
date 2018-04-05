@@ -12,12 +12,12 @@ echo '<div class="container">';
 		foreach ($passwords as $password)
 		{
 			echo '<tr class="entry" password_id=' . $password->id . '>';
-				echo '<td>' . $password->URL . '</td>';
-				echo '<td class="toDecrypt">' . $password->username . '</td>';
-				echo '<td class="toDecrypt">' . $password->email . '</td>';
-				echo '<td class="toDecrypt">' . $password->password . '</td>';
-				echo '<td>' . $password->comment . '</td>';
-				echo '<td>' . $password->type . '</td>';
+				echo '<td name="URL" password_id=' . $password->id . '>' . $password->URL . '</td>';
+				echo '<td name="username" password_id=' . $password->id . ' class="toDecrypt">' . $password->username . '</td>';
+				echo '<td name="email" password_id=' . $password->id . ' class="toDecrypt">' . $password->email . '</td>';
+				echo '<td name="password" password_id=' . $password->id . ' class="toDecrypt">' . $password->password . '</td>';
+				echo '<td name="comment" password_id=' . $password->id . '>' . $password->comment . '</td>';
+				echo '<td name="type" password_id=' . $password->id . '>' . $password->type . '</td>';
 			echo '</tr>';
 		}
 	echo '</table>';

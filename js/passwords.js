@@ -74,12 +74,12 @@ $(document).ready(function(){
 	}
 
 	function fillMaskModifyPassword() {
-		$("#PasswordEditForm #url").val($(".entry[password_id=" + passwordid + "]").children().html());
-		$("#PasswordEditForm #username").val($(".entry[password_id=" + passwordid + "]").children().next().html());
-		$("#PasswordEditForm #email").val($(".entry[password_id=" + passwordid + "]").children().next().next().html());
-		$("#PasswordEditForm #password").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().html());
-		$("#PasswordEditForm #comment").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().next().html());
-		$("#PasswordEditForm #type").val($(".entry[password_id=" + passwordid + "]").children().next().next().next().next().next().html());
+		$("#PasswordEditForm #url").val($("td[password_id='" + passwordid + "'][name='url']").text());
+		$("#PasswordEditForm #username").val($("td[password_id='" + passwordid + "'][name='username']").text());
+		$("#PasswordEditForm #email").val($("td[password_id='" + passwordid + "'][name='email']").text());
+		$("#PasswordEditForm #password").val($("td[password_id='" + passwordid + "'][name='password']").text());
+		$("#PasswordEditForm #comment").val($("td[password_id='" + passwordid + "'][name='comment']").text());
+		$("#PasswordEditForm #type").val($("td[password_id='" + passwordid + "'][name='type']").text());
 	}
 
 	$('#password1, #password2, #password3').keyup(function(event){ //wenn taste losgelassen wird
