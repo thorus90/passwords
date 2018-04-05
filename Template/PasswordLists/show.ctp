@@ -55,7 +55,7 @@
     <?php
     echo $this->Form->create($password, [ 'url' => [ 'controller' => 'passwords', 'action' => 'edit' ], 'id' => 'PasswordEditForm' ] );
     echo $this->Form->input('URL');
-    echo $this->Form->input('user&name');
+    echo $this->Form->input('username');
     echo $this->Form->input('email');
     echo $this->Form->input('password', [ 'type' => 'text' ]);
     echo $this->Form->input('comment');
